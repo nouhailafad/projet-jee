@@ -25,13 +25,18 @@
         .permanent { background: #d5f5e3; color: #1e8449; }
         .doctorant { background: #d6eaf8; color: #1a5276; }
         .associe { background: #fdebd0; color: #784212; }
+        .retraite { background: #eaecee; color: #5d6d7e; }
+        .ancien { background: #fadbd8; color: #943126; }
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
         .modal.active { display:flex; }
-        .modal-box { background:white; padding:30px; border-radius:10px; width:400px; }
+        .modal-box { background:white; padding:30px; border-radius:10px; width:400px; max-height:90vh; overflow-y:auto; }
         .modal-box input, .modal-box select { width:100%; padding:8px; margin:6px 0 12px; border:1px solid #ddd; border-radius:5px; box-sizing:border-box; }
+        .modal-box label { font-size:13px; color:#555; }
         .modal-box button { width:100%; padding:10px; background:#2c3e50; color:white; border:none; border-radius:5px; cursor:pointer; }
-        .btn-desactiver { background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px; }
-        .btn-reactiver { background:#27ae60; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px; }
+        .btn-desactiver { background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px; margin:2px; }
+        .btn-reactiver { background:#27ae60; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px; margin:2px; }
+        .btn-retraite { background:#7f8c8d; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px; margin:2px; }
+        .btn-ancien { background:#c0392b; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:12px; margin:2px; }
     </style>
 </head>
 <body>
@@ -40,6 +45,7 @@
         <div>
             <a href="index.jsp">🏠 Accueil</a>
             <a href="dashboard.jsp">Dashboard</a>
+            <a href="affiliations">🏷️ Affiliations</a>
             <a href="login.jsp">Déconnexion</a>
         </div>
     </div>
@@ -70,11 +76,31 @@
                         <input type="hidden" name="id" value="<%= m.getId() %>"/>
                         <button type="submit" class="btn-desactiver">🔒 Désactiver</button>
                     </form>
+                    <form action="membres" method="post" style="display:inline">
+                        <input type="hidden" name="action" value="retraite"/>
+                        <input type="hidden" name="id" value="<%= m.getId() %>"/>
+                        <button type="submit" class="btn-retraite" onclick="return confirm('Mettre ce membre en retraite ? Son compte sera gelé.')">🧓 Mettre en retraite</button>
+                    </form>
+                    <form action="membres" method="post" style="display:inline">
+                        <input type="hidden" name="action" value="ancien"/>
+                        <input type="hidden" name="id" value="<%= m.getId() %>"/>
+                        <button type="submit" class="btn-ancien" onclick="return confirm('Marquer ce membre comme ancien membre ? Le compte sera désactivé mais pourra être réactivé plus tard.')">🚪 Marquer ancien membre</button>
+                    </form>
                     <% } else { %>
                     <form action="membres" method="post" style="display:inline">
                         <input type="hidden" name="action" value="reactiver"/>
                         <input type="hidden" name="id" value="<%= m.getId() %>"/>
                         <button type="submit" class="btn-reactiver">🔓 Réactiver</button>
+                    </form>
+                    <form action="membres" method="post" style="display:inline">
+                        <input type="hidden" name="action" value="reactiverAvecStatut"/>
+                        <input type="hidden" name="id" value="<%= m.getId() %>"/>
+                        <select name="nouveauStatut" style="width:auto;display:inline;padding:5px;margin:2px;">
+                            <option value="permanent">Permanent</option>
+                            <option value="associe">Associé</option>
+                            <option value="doctorant">Doctorant</option>
+                        </select>
+                        <button type="submit" class="btn-reactiver">🔄 Réintégrer</button>
                     </form>
                     <% } %>
                 </td>
@@ -94,6 +120,13 @@
                 <input type="email" name="email" placeholder="Email" required/>
                 <input type="password" name="motDePasse" placeholder="Mot de passe" required/>
                 <input type="text" name="etablissement" placeholder="Établissement"/>
+
+                <label>Date de naissance</label>
+                <input type="date" name="dateNaissance"/>
+
+                <label>Date d'embauche</label>
+                <input type="date" name="dateEmbauche"/>
+
                 <select name="statut">
                     <option value="permanent">Permanent</option>
                     <option value="associe">Associé</option>
@@ -107,8 +140,3 @@
     </div>
 </body>
 </html>
-
-
-
-
-

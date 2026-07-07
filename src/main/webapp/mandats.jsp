@@ -27,6 +27,9 @@
         .vice_directeur { background: #fdebd0; color: #784212; }
         .chef_equipe { background: #d5f5e3; color: #1e8449; }
         .membre { background: #d6eaf8; color: #1a5276; }
+        .en-cours { background: #d5f5e3; color: #1e8449; padding: 4px 8px; border-radius: 10px; font-size: 12px; }
+        .terminee { background: #eaecee; color: #5d6d7e; padding: 4px 8px; border-radius: 10px; font-size: 12px; }
+        .btn-terminer { background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:5px; cursor:pointer; font-size:12px; }
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
         .modal.active { display:flex; }
         .modal-box { background:white; padding:30px; border-radius:10px; width:450px; }
@@ -52,13 +55,31 @@
                 <th>Rôle</th>
                 <th>Date début</th>
                 <th>Date fin</th>
+                <th>Statut</th>
+                <th>Actions</th>
             </tr>
             <% if(mandats != null) { for(Mandat m : mandats) { %>
             <tr>
                 <td><%= m.getPrenomMembre() %> <%= m.getNomMembre() %></td>
                 <td><span class="role <%= m.getRole() %>"><%= m.getRole() %></span></td>
                 <td><%= m.getDateDebut() %></td>
-                <td><%= m.getDateFin() != null ? m.getDateFin() : "En cours" %></td>
+                <td><%= m.getDateFin() != null ? m.getDateFin() : "-" %></td>
+                <td>
+                    <% if(m.getDateFin() == null) { %>
+                        <span class="en-cours">En cours</span>
+                    <% } else { %>
+                        <span class="terminee">Terminé</span>
+                    <% } %>
+                </td>
+                <td>
+                    <% if(m.getDateFin() == null) { %>
+                    <form action="mandats" method="post" style="display:inline">
+                        <input type="hidden" name="action" value="terminer"/>
+                        <input type="hidden" name="utilisateurId" value="<%= m.getUtilisateurId() %>"/>
+                        <button type="submit" class="btn-terminer" onclick="return confirm('Mettre fin à ce mandat ?')">Terminer</button>
+                    </form>
+                    <% } %>
+                </td>
             </tr>
             <% }} %>
         </table>
@@ -66,6 +87,7 @@
     <div class="modal" id="modal">
         <div class="modal-box">
             <h3>Ajouter un mandat</h3>
+            <p style="color:#888;font-size:12px;">Si le membre choisi a déjà un mandat en cours, celui-ci sera automatiquement terminé à la date d'aujourd'hui.</p>
             <form action="mandats" method="post">
                 <input type="hidden" name="action" value="ajouter"/>
                 <select name="utilisateurId">
@@ -81,8 +103,6 @@
                 </select>
                 <label>Date début:</label>
                 <input type="date" name="dateDebut" required/>
-                <label>Date fin (optionnel):</label>
-                <input type="date" name="dateFin"/>
                 <button type="submit">Ajouter</button>
             </form>
             <br>

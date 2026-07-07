@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.lias.model.Materiel, java.util.List" %>
+<%@ page import="com.lias.model.Materiel, com.lias.model.Utilisateur, java.util.List" %>
 <%
     if(session.getAttribute("utilisateur") == null) {
         response.sendRedirect("login.jsp");
         return;
     }
     List<Materiel> materiels = (List<Materiel>) request.getAttribute("materiels");
+    List<Utilisateur> membres = (List<Utilisateur>) request.getAttribute("membres");
 %>
 <!DOCTYPE html>
 <html>
@@ -24,8 +25,13 @@
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
         .modal.active { display:flex; }
         .modal-box { background:white; padding:30px; border-radius:10px; width:450px; }
-        .modal-box input, .modal-box textarea { width:100%; padding:8px; margin:6px 0 12px; border:1px solid #ddd; border-radius:5px; box-sizing:border-box; }
+        .modal-box input, .modal-box textarea, .modal-box select { width:100%; padding:8px; margin:6px 0 12px; border:1px solid #ddd; border-radius:5px; box-sizing:border-box; }
         .modal-box button { width:100%; padding:10px; background:#2c3e50; color:white; border:none; border-radius:5px; cursor:pointer; }
+        .disponible { background:#d5f5e3; color:#1e8449; padding:4px 8px; border-radius:10px; font-size:12px; }
+        .attribue { background:#d6eaf8; color:#1a5276; padding:4px 8px; border-radius:10px; font-size:12px; }
+        .btn-distribuer { background:#2980b9; color:white; border:none; padding:6px 12px; border-radius:5px; cursor:pointer; font-size:12px; }
+        .distrib-form { display:flex; gap:5px; align-items:center; }
+        .distrib-form select { width:auto; margin:0; padding:5px; }
     </style>
 </head>
 <body>
@@ -49,14 +55,40 @@
                 <th>Nom</th>
                 <th>Description</th>
                 <th>Date arrivage</th>
+                <th>Attribué à</th>
                 <th>Date distribution</th>
+                <th>Actions</th>
             </tr>
             <% if(materiels != null) { for(Materiel m : materiels) { %>
             <tr>
                 <td><%= m.getNom() %></td>
                 <td><%= m.getDescription() != null ? m.getDescription() : "-" %></td>
                 <td><%= m.getDateArrivage() != null ? m.getDateArrivage() : "-" %></td>
-                <td><%= m.getDateDistribution() != null ? m.getDateDistribution() : "Non distribué" %></td>
+                <td>
+                    <% if(m.getDateDistribution() == null) { %>
+                        <span class="disponible">Disponible</span>
+                    <% } else { %>
+                        <span class="attribue"><%= m.getNomMembre() %> <%= m.getPrenomMembre() %></span>
+                    <% } %>
+                </td>
+                <td><%= m.getDateDistribution() != null ? m.getDateDistribution() : "-" %></td>
+                <td>
+                    <% if(m.getDateDistribution() == null) { %>
+                    <form action="materiel" method="post" class="distrib-form">
+                        <input type="hidden" name="action" value="distribuer"/>
+                        <input type="hidden" name="materielId" value="<%= m.getId() %>"/>
+                        <select name="utilisateurId" required>
+                            <option value="">Choisir un membre</option>
+                            <% if(membres != null) { for(Utilisateur u : membres) { %>
+                            <option value="<%= u.getId() %>"><%= u.getPrenom() %> <%= u.getNom() %></option>
+                            <% }} %>
+                        </select>
+                        <button type="submit" class="btn-distribuer">Distribuer</button>
+                    </form>
+                    <% } else { %>
+                        <span style="color:#999;font-size:12px;">Déjà distribué</span>
+                    <% } %>
+                </td>
             </tr>
             <% }} %>
         </table>

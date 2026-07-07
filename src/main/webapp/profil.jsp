@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.lias.model.Utilisateur" %>
+<%@ page import="com.lias.model.Utilisateur, com.lias.model.HistoriqueProfil, java.util.List" %>
 <%
     if(session.getAttribute("utilisateur") == null) {
         response.sendRedirect("login.jsp");
         return;
     }
     Utilisateur profil = (Utilisateur) request.getAttribute("profil");
+    List<HistoriqueProfil> historique = (List<HistoriqueProfil>) request.getAttribute("historique");
 %>
 <!DOCTYPE html>
 <html>
@@ -16,7 +17,7 @@
         .navbar { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
         .navbar a { color: white; text-decoration: none; margin-left: 15px; }
         .content { max-width: 700px; margin: 30px auto; }
-        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 25px; }
         h2 { color: #2c3e50; }
         label { color: #777; font-size: 13px; display: block; margin-top: 15px; }
         input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; margin-top: 5px; }
@@ -24,6 +25,12 @@
         button { background: #2c3e50; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 15px; }
         .success { background: #d5f5e3; color: #1e8449; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
         .statut { background: #d6eaf8; color: #1a5276; padding: 5px 12px; border-radius: 10px; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #2c3e50; color: white; padding: 10px; text-align: left; font-size: 13px; }
+        td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .champ-badge { background: #eaecee; color: #2c3e50; padding: 3px 8px; border-radius: 8px; font-size: 11px; }
+        .valeur-ancienne { color: #c0392b; text-decoration: line-through; }
+        .valeur-nouvelle { color: #1e8449; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -62,6 +69,31 @@
             </form>
             <% } else { %>
                 <p>Erreur: profil non trouvé!</p>
+            <% } %>
+        </div>
+
+        <!-- Historique des modifications du profil -->
+        <div class="card">
+            <h2>🕓 Historique des modifications</h2>
+            <% if(historique != null && historique.size() > 0) { %>
+            <table>
+                <tr>
+                    <th>Champ modifié</th>
+                    <th>Ancienne valeur</th>
+                    <th>Nouvelle valeur</th>
+                    <th>Date</th>
+                </tr>
+                <% for(HistoriqueProfil h : historique) { %>
+                <tr>
+                    <td><span class="champ-badge"><%= h.getChampModifie() %></span></td>
+                    <td class="valeur-ancienne"><%= h.getAncienneValeur() %></td>
+                    <td class="valeur-nouvelle"><%= h.getNouvelleValeur() %></td>
+                    <td><%= h.getDateModification() %></td>
+                </tr>
+                <% } %>
+            </table>
+            <% } else { %>
+                <p style="color:#999;">Aucune modification enregistrée pour le moment.</p>
             <% } %>
         </div>
     </div>

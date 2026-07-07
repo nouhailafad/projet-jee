@@ -8,6 +8,10 @@ public class Materiel {
     private int utilisateurId;
     private String dateDistribution;
 
+    // Champs additionnels pratiques pour l'affichage (issus de jointure SQL)
+    private String nomMembre;
+    private String prenomMembre;
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -25,4 +29,10 @@ public class Materiel {
 
     public String getDateDistribution() { return dateDistribution; }
     public void setDateDistribution(String dateDistribution) { this.dateDistribution = dateDistribution; }
+
+    public String getNomMembre() { return nomMembre; }
+    public void setNomMembre(String nomMembre) { this.nomMembre = nomMembre; }
+
+    public String getPrenomMembre() { return prenomMembre; }
+    public void setPrenomMembre(String prenomMembre) { this.prenomMembre = prenomMembre; }
 }

@@ -1,5 +1,7 @@
 package com.lias.model;
 
+import java.sql.Date;
+
 public class Utilisateur {
     private int id;
     private String nom;
@@ -13,6 +15,8 @@ public class Utilisateur {
     private String photo;
     private boolean actif;
     private String centresInteret;
+    private Date dateNaissance;
+    private Date dateEmbauche;
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -49,4 +53,10 @@ public class Utilisateur {
 
     public String getCentresInteret() { return centresInteret; }
     public void setCentresInteret(String centresInteret) { this.centresInteret = centresInteret; }
+
+    public Date getDateNaissance() { return dateNaissance; }
+    public void setDateNaissance(Date dateNaissance) { this.dateNaissance = dateNaissance; }
+
+    public Date getDateEmbauche() { return dateEmbauche; }
+    public void setDateEmbauche(Date dateEmbauche) { this.dateEmbauche = dateEmbauche; }
 }
